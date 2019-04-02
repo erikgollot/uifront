@@ -1,0 +1,44 @@
+server:
+    port: 8085
+spring:
+  application:
+    name: uifront
+  cloud:
+    gateway:
+      routes:
+        - id: MyApplication
+          uri: lb://MyApplication
+          predicates:
+          - Path=/api/**
+        # SockJS route
+        - id: websocket_sockjs_route
+          uri: lb:http://MyApplication
+          predicates:
+          - Path=/ws/info/**
+        # Normal Websocket route
+        - id: websocket_route
+          uri: lb:ws://MyApplication
+          predicates:
+          - Path=/ws/**
+  security:
+    user:
+        name: toto
+        password: toto
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+  jms:
+    pub-sub-domain: true
+
+ribbon:
+  eureka:
+    enabled: true
+dozer:
+    ribbon:
+      NFLoadBalancerClassName: com.netflix.loadbalancer.RoundRobinRule
+
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
